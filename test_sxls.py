@@ -16,14 +16,17 @@ def excel():
     ws.column_dimensions[get_column_letter(4)].width = 100
     ws.column_dimensions[get_column_letter(5)].width = 50
     ws.column_dimensions[get_column_letter(6)].width = 100
-    for i, j in enumerate(list_result):
-        ws[f'A{i + 2}'] = f'{i}'
-        # ws[f'B{i + 2}'] = f'{i}' ПОД ВОПРОСОМ
-        ws[f'C{i + 2}'] = f'{j[0]}'
-        ws[f'D{i + 2}'] = f'{j[1]}'
-        ws[f'E{i + 2}'] = f'{j[2]}'
-        ws[f'F{i + 2}'] = f'{j[3]}'
+    i = 2 # Ячейка, с которой начинается заполнения, НО НУЖНО ПРИДУМАТЬ КАК ОПРЕДЕЛИТЬ ПОСЛЕДНУЮЮ НЕЗАПОЛНЕННУЮ СТРОЧКУ
+    for j in list_result:
+        ws[f'A{i}'] = f'{i}'
+        # ws[f'B{i}'] = f'{i}' ПОД ВОПРОСОМ
+        ws[f'C{i}'] = f'{j[0]}'
+        ws[f'D{i}'] = f'{j[1]}'
+        # ws[f'E{i}'] = f'{j[2]}'
+        ws[f'F{i}'] = f'{j[2]}'
+        i += 1
     wb.save(fn)
     wb.close()
 
-excel()
+if __name__ == '__main__':
+    excel()

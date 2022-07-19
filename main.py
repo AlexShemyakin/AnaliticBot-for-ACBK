@@ -34,22 +34,30 @@ def find_news():
 
 
 def open_href(href):
-    url = href
-    firefox_options = webdriver.FirefoxOptions()
-    firefox_options.add_argument('--headless')
-    driver = webdriver.Firefox(executable_path='/home/alexander/Python_projects/bot_olx/bot_olx/geckodriver', options=firefox_options)
-    time.sleep(1)
-    driver.get(url)
-    time.sleep(5)
-    description = driver.find_element(by=By.CLASS_NAME, value='css-g5mtbi-Text').text
-    date_public = driver.find_element(by=By.CLASS_NAME, value='css-19yf5ek').text
-    contact = driver.find_element(by=By.CLASS_NAME, value='css-65ydbw-BaseStyles')
-    contact.click()
-    time.sleep(4)
-    contact = driver.find_element(by=By.CLASS_NAME, value='css-v1ndtc').text
-    driver.close()
+    url = f'{href}'
+    page = requests.get(url)  # извлекаем данные в переменную
+    soup = BeautifulSoup(page.text, 'html.parser')  # сохраняем html страницы, откуда будем извлекать данные
+    description = soup.find('div', {'class': 'css-g5mtbi-Text'}).get_text()
+    date_public = soup.find('span', {'class': 'css-19yf5ek'}).get_text()
 
-    return [date_public, href, contact, description]
+    return [date_public, href, description]
+
+#     url = href
+#     firefox_options = webdriver.FirefoxOptions()
+#     firefox_options.add_argument('--headless')
+#     driver = webdriver.Firefox(executable_path='/home/alexander/Python_projects/bot_olx/bot_olx/geckodriver',
+#                                options=firefox_options)
+#     driver.get(url)
+#     time.sleep(2)
+#     description = driver.find_element(by=By.CLASS_NAME, value='css-g5mtbi-Text').text
+#     date_public = driver.find_element(by=By.CLASS_NAME, value='css-19yf5ek').text
+#     contact = driver.find_element(by=By.CLASS_NAME, value='css-65ydbw-BaseStyles')
+#     contact.click()
+#     time.sleep(1)
+#     contact = driver.find_element(by=By.CLASS_NAME, value='css-v1ndtc').text
+#     driver.close()
+#
+#     return [date_public, href, contact, description]
 
 
 def main_foo():

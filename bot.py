@@ -26,7 +26,7 @@ def start_bot():
                              message.from_user), reply_markup=markup)
 
         bot.send_message(message.chat.id,
-                         "Для выполнений запроса нажмите кнопку 'Start".format(
+                         "Для выполнений запроса нажмите кнопку Start".format(
                              message.from_user), reply_markup=markup)
 
 
@@ -35,7 +35,7 @@ def start_bot():
     def handle_text(message):
         global flag
         if message.text == 'About Bot':
-            bot.send_message(message.from_user.id, f"Данный бот выполняет сбор ссылок и формирует в excel-файл")
+            bot.send_message(message.from_user.id, f"В тестовом режиме бот анализирует olx.kz и формирует excel-файл.")
 
         elif message.text == 'Start':
             ex()

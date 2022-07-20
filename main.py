@@ -1,13 +1,14 @@
 import os
 import time
-
+import datetime
 import requests
-from selenium import webdriver
-from selenium.webdriver.firefox.options import Options
-from selenium.webdriver.common.by import By
-from webdriver_manager.firefox import GeckoDriverManager
+# from selenium import webdriver
+# from selenium.webdriver.firefox.options import Options
+# from selenium.webdriver.common.by import By
+# from webdriver_manager.firefox import GeckoDriverManager
 from bs4 import BeautifulSoup
 import re
+from operator import itemgetter
 
 
 def find_news():
@@ -33,31 +34,17 @@ def find_news():
     return
 
 
-def open_href(href):
+def open_href(href, request):
     url = f'{href}'
     page = requests.get(url)  # извлекаем данные в переменную
     soup = BeautifulSoup(page.text, 'html.parser')  # сохраняем html страницы, откуда будем извлекать данные
     description = soup.find('div', {'class': 'css-g5mtbi-Text'}).get_text()
     date_public = soup.find('span', {'class': 'css-19yf5ek'}).get_text()
 
-    return [date_public, href, description]
-
-#     url = href
-#     firefox_options = webdriver.FirefoxOptions()
-#     firefox_options.add_argument('--headless')
-#     driver = webdriver.Firefox(executable_path='/home/alexander/Python_projects/bot_olx/bot_olx/geckodriver',
-#                                options=firefox_options)
-#     driver.get(url)
-#     time.sleep(2)
-#     description = driver.find_element(by=By.CLASS_NAME, value='css-g5mtbi-Text').text
-#     date_public = driver.find_element(by=By.CLASS_NAME, value='css-19yf5ek').text
-#     contact = driver.find_element(by=By.CLASS_NAME, value='css-65ydbw-BaseStyles')
-#     contact.click()
-#     time.sleep(1)
-#     contact = driver.find_element(by=By.CLASS_NAME, value='css-v1ndtc').text
-#     driver.close()
-#
-#     return [date_public, href, contact, description]
+    #Если объявление было выложено в этот день с надписью "Сегодня" ты форматируем в привычный формат
+    if re.search(r'Сегодня', f"{date_public}"):
+        date_public = datetime.datetime.today().strftime('%d %B %Y г.')
+    return [request, date_public, href, description]
 
 
 def main_foo():
@@ -97,7 +84,8 @@ def main_foo():
             for ad in list_of_ads: #Перебор всех объявлений со страницы и достаем от туда href
                 if ad.__getattribute__('attrs')['href'] not in list_result: #Если ссылки еще нет в list_href, то добавляем
                     href = ad.__getattribute__('attrs')['href']
-                    list_result.append(open_href(href))
+                    list_result.append(open_href(href, i))
+            list_result = sorted(list_result, key=itemgetter(0, 1))
             print(f'Кол-во ссылок после просмотра {p} страницы - {len(list_result)}')
     return list_result
 

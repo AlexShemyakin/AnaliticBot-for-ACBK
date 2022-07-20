@@ -35,9 +35,10 @@ def start_bot():
     def handle_text(message):
         global flag
         if message.text == 'About Bot':
-            bot.send_message(message.from_user.id, f"В тестовом режиме бот анализирует olx.kz и формирует excel-файл.")
+            bot.send_message(message.from_user.id, "В тестовом режиме бот анализирует olx.kz и формирует excel-файл.")
 
         elif message.text == 'Start':
+            bot.send_message(message.from_user.id, 'Процесс может занять несколько минут.')
             ex()
             bot.send_document(message.from_user.id, open('test_xlsx.xlsx', 'rb'))
             #bot.send_message(message.from_user.id, answer)

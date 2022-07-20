@@ -85,7 +85,7 @@ def main_foo():
                 if ad.__getattribute__('attrs')['href'] not in list_result: #Если ссылки еще нет в list_href, то добавляем
                     href = ad.__getattribute__('attrs')['href']
                     list_result.append(open_href(href, i))
-            list_result = sorted(list_result, key=itemgetter(0, 1))
+            list_result = sorted(list_result, key=itemgetter(0, 1), reverse=True)
             print(f'Кол-во ссылок после просмотра {p} страницы - {len(list_result)}')
     return list_result
 

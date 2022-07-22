@@ -20,7 +20,7 @@ def excel():
         ws[f'A{i}'] = f'{i-1}'
         ws[f'B{i}'] = f'{j[0]}'
         ws[f'C{i}'] = f'{j[1]}'
-        ws[f'D{i}'] = f'{j[2]}'
+        ws[f'D{i}'] = j[2]
         ws[f'E{i}'] = f'{j[3]}'
         i += 1
     wb.save(fn)

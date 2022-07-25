@@ -2,36 +2,86 @@ import os
 import time
 import datetime
 import requests
-# from selenium import webdriver
-# from selenium.webdriver.firefox.options import Options
-# from selenium.webdriver.common.by import By
-# from webdriver_manager.firefox import GeckoDriverManager
+from selenium import webdriver
+from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.common.by import By
+from webdriver_manager.firefox import GeckoDriverManager
 from bs4 import BeautifulSoup
 import re
 from operator import itemgetter
 
 
-def find_news():
+
+def find_news(period, *args):
     list_key = ['контрабанда рогов сайгака', 'контрабанда сайгачьих рогов', 'незаконный вывоз рогов сайгака',
                 'контрабандный вывоз степных черепах', 'незаконный вывоз балобанов']
 
-    list_news = {}
-    k = 9
-    for i in list_key:
-        url = f'https://www.google.com/search?q={i}'
-        page = requests.get(url)  # извлекаем данные в переменную
-        soup = BeautifulSoup(page.text, 'html.parser')  # сохраняем html страницы, откуда будем извлекать данные
-        search = soup.find_all('h3')
-        search_data = soup.find_all('span')
+    list_headers = []
+    list_date = []
+    list_href = []
+    count_requsts = 0
+    firefox_options = Options()
+    firefox_options.add_argument('user-data-dir=selenium')
+    # firefox_options.add_argument("--headless")
+    driver = webdriver.Firefox(executable_path=GeckoDriverManager().install(), options=firefox_options)
+    driver.get('https://google.com/')
 
-        for j in range(len(search)):
-            k += 1
-            print(f'{search[j].get_text()}\n'
-                  f'{search_data[k].get_text()}')
+    for req in list_key:
+        if count_requsts == 1:
+            search = driver.find_element(by=By.XPATH,
+                                         value='/html/body/div[4]/div[2]/form/div[1]/div[1]/div[2]/div/div[2]/input')
+        else:
+            search = driver.find_element(by=By.XPATH,
+                                         value='/html/body/div[1]/div[3]/form/div[1]/div[1]/div[1]/div/div[2]/input')
 
-            soup.findAll('span', {"class": "item"})
+        search.clear()
+        search.send_keys(req)
+        search.submit()
+        time.sleep(1)
 
-    return
+        if period == 'm' and count_requsts == 0:
+            driver.find_element(by=By.CLASS_NAME, value='t2vtad').click()
+            driver.find_elements(by=By.CLASS_NAME, value='KTBKoe')[1].click()
+            driver.find_elements(by=By.CLASS_NAME, value='tnhqA')[12].click()
+            count_requsts = 1
+
+        elif period == 'p' and count_requsts == 0:
+            driver.find_element(by=By.CLASS_NAME, value='t2vtad').click()
+            driver.find_elements(by=By.CLASS_NAME, value='KTBKoe')[1].click()
+            driver.find_elements(by=By.CLASS_NAME, value='tnhqA')[14].click()
+            driver.find_element(by=By.ID, value='OouJcb').send_keys(args[0])
+            driver.find_element(by=By.ID, value='rzG2be').send_keys(args[1])
+            driver.find_elements(by=By.CLASS_NAME, value='fE5Rge')[0].click()
+            count_requsts = 1
+
+
+        #Поиск заголовков и ссылок
+        search = driver.find_elements(by=By.CLASS_NAME, value='yuRUbf')
+        for i in search:
+            header = i.text.find('\n')
+            header = i.text[:header]
+            href = driver.find_element(by=By.PARTIAL_LINK_TEXT, value=header)
+            href = href.get_attribute('href')
+            list_href.append(href)
+            list_headers.append(header)
+
+        #Поиск дат
+        date = driver.find_elements(by=By.CLASS_NAME, value='WZ8Tjf')
+        for i in date:
+            date = i.text.find('г.')
+            date = i.text[:date+2]
+            list_date.append(date)
+
+    driver.close()
+
+
+    print(list_date)
+    print(list_headers)
+    print(list_href)
+
+
+    return 1
+
 
 
 def open_href(href, request):
@@ -57,7 +107,6 @@ def main_foo():
 
     # ПЕРЕБОР ЗАПРОСОВ ИЗ list_of_requests
     for i in list_of_requests:
-        j = 0
         url_olx = f'https://www.olx.kz/list/q-{i}/'
         page = requests.get(url_olx) #извлекаем данные в переменную
         soup = BeautifulSoup(page.text, 'html.parser') #сохраняем html страницы, откуда будем извлекать данные
@@ -90,7 +139,7 @@ def main_foo():
     return list_result
 
 
-# if __name__ == '__main__':
+if __name__ == '__main__':
     # main_foo()
-    # find_news()
+    find_news(0, '1.1.2020', '2.2.2020')
     # open_href()

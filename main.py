@@ -1,6 +1,6 @@
 import os
 import time
-import datetime
+from datetime import datetime, timedelta
 import requests
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
@@ -19,6 +19,7 @@ def find_news(period, *args):
     list_headers = []
     list_date = []
     list_href = []
+    list_keyword = []
     count_requsts = 0
     firefox_options = Options()
     firefox_options.add_argument('user-data-dir=selenium')
@@ -27,6 +28,7 @@ def find_news(period, *args):
     driver.get('https://google.com/')
 
     for req in list_key:
+        list_keyword.append(req)
         if count_requsts == 1:
             search = driver.find_element(by=By.XPATH,
                                          value='/html/body/div[4]/div[2]/form/div[1]/div[1]/div[2]/div/div[2]/input')
@@ -68,19 +70,27 @@ def find_news(period, *args):
         #Поиск дат
         date = driver.find_elements(by=By.CLASS_NAME, value='WZ8Tjf')
         for i in date:
-            date = i.text.find('г.')
-            date = i.text[:date+2]
+            if re.search(r'час', f'{i.text}'):
+                date = datetime.today().strftime('%d %B %Y г.')
+            elif re.search(r'дне', f'{i.text}') or re.search(r'дня', f'{i.text}') or re.search(r'ден', f'{i.text}'):
+                space = i.text.find(' ')
+                date = datetime.today() - timedelta(days=int(i.text[:space]))
+                date = date.strftime('%d %B %Y г.')
+            elif re.search(r'г.', f'{i.text}'):
+                date = i.text.find('г.')
+                date = i.text[:date + 2]
+            else:
+                date = 'б/д'
+
             list_date.append(date)
 
     driver.close()
-
-
+    print(list_keyword)
     print(list_date)
-    print(list_headers)
+    print(list_keyword)
     print(list_href)
 
-
-    return 1
+    return [list_keyword, list_date, list_keyword, list_href]
 
 
 
@@ -93,7 +103,7 @@ def open_href(href, request):
 
     #Если объявление было выложено в этот день с надписью "Сегодня" ты форматируем в привычный формат
     if re.search(r'Сегодня', f"{date_public}"):
-        date_public = datetime.datetime.today().strftime('%d %B %Y г.')
+        date_public = datetime.today().strftime('%d %B %Y г.')
     return [request, date_public, href, description]
 
 
@@ -129,9 +139,12 @@ def main_foo():
             url_olx = f'https://www.olx.kz/list/q-{i}/?page={p}'
             page = requests.get(url_olx)
             soup = BeautifulSoup(page.text, 'html.parser')
-            list_of_ads = soup.findAll('a', {"class": "thumb"}) # Кол-во объявлений на каждой странице
-            for ad in list_of_ads: #Перебор всех объявлений со страницы и достаем от туда href
-                if ad.__getattribute__('attrs')['href'] not in list_result: #Если ссылки еще нет в list_href, то добавляем
+            # Кол-во объявлений на каждой странице
+            list_of_ads = soup.findAll('a', {"class": "thumb"})
+            # Перебор всех объявлений со страницы и достаем от туда href
+            for ad in list_of_ads:
+                # Если этого объявления еще нет в list_href, то добавляем
+                if ad.__getattribute__('attrs')['href'] not in list_result:
                     href = ad.__getattribute__('attrs')['href']
                     list_result.append(open_href(href, i))
             list_result = sorted(list_result, key=itemgetter(0, 1), reverse=True)

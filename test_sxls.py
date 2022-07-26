@@ -39,18 +39,25 @@ def excel():
     fn = 'test_xlsx.xlsx'
     wb = load_workbook(fn)
     ws = wb['Statistic']
+    row = ws.max_row + 1
     #ws.column_dimensions[get_column_letter(2)].width = 20
     #ws.column_dimensions[get_column_letter(3)].width = 20
     #ws.column_dimensions[get_column_letter(4)].width = 50
     #ws.column_dimensions[get_column_letter(5)].width = 50
-    i = 2 # Ячейка, с которой начинается заполнения, НО НУЖНО ПРИДУМАТЬ КАК ОПРЕДЕЛИТЬ ПОСЛЕДНУЮЮ НЕЗАПОЛНЕННУЮ СТРОЧКУ
+    count = True
+    # Ячейка, с которой начинается заполнения, НО НУЖНО ПРИДУМАТЬ КАК ОПРЕДЕЛИТЬ ПОСЛЕДНУЮЮ НЕЗАПОЛНЕННУЮ СТРОЧКУ
     for j in list_result:
-        ws[f'A{i}'] = f'{i-1}'
-        ws[f'B{i}'] = f'{j[0]}'
-        ws[f'C{i}'] = f'{j[1]}'
-        ws[f'D{i}'] = j[2]
-        ws[f'E{i}'] = f'{j[3]}'
-        i += 1
+        for i in ws['D']:
+            if j[2] == i.value:
+                count = False
+                break
+        if count:
+            ws[f'A{row}'] = f'{row - 1}'
+            ws[f'B{row}'] = f'{j[0]}'
+            ws[f'C{row}'] = f'{j[1]}'
+            ws[f'D{row}'] = j[2]
+            ws[f'E{row}'] = f'{j[3]}'
+            row += 1
     wb.save(fn)
     wb.close()
 

@@ -1,6 +1,6 @@
 import telebot
 from telebot import types
-from test_sxls import excel as ex, excel_news as exnw
+from io_xlsx import excel as ex, excel_news as exnw
 from settings import TOKEN as TOKEN
 import time
 

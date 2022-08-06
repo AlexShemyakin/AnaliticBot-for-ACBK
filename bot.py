@@ -1,7 +1,7 @@
 import telebot
 from telebot import types
 from test_sxls import excel as ex, excel_news as exnw
-import sched
+# import sched
 import time
 
 
@@ -18,7 +18,7 @@ def start_bot():
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         btn1 = types.KeyboardButton("About Bot")
         btn2 = types.KeyboardButton("News")
-        btn3 = types.KeyboardButton("Start")
+        btn3 = types.KeyboardButton("Ads")
         markup.add(btn1, btn2, btn3)
 
         bot.send_message(message.chat.id,
@@ -39,10 +39,10 @@ def start_bot():
             bot.send_message(message.from_user.id, "В тестовом режиме бот анализирует olx.kz и формирует excel-файл.")
 
 
-        elif message.text == 'Start':
+        elif message.text == 'Ads':
             bot.send_message(message.from_user.id, 'Процесс может занять несколько минут.')
             ex()
-            bot.send_document(message.from_user.id, open('advertisements.xlsx', 'rb'))
+            bot.send_document(message.from_user.id, open('ads.xlsx', 'rb'))
 
 
         elif message.text == 'News':
@@ -106,6 +106,11 @@ def start_bot():
             markup.add(btn1, btn2, btn3)
             bot.send_message(message.from_user.id, 'Вы вышли в главное меню.'.format(message.from_user),
                              reply_markup=markup)
+
+        else:
+            pass
+
+
 
     bot.polling(none_stop=True, interval=0)
 

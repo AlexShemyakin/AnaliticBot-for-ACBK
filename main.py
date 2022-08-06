@@ -1,4 +1,3 @@
-import os
 import time
 from datetime import datetime, timedelta
 import requests
@@ -9,7 +8,6 @@ from webdriver_manager.firefox import GeckoDriverManager
 from bs4 import BeautifulSoup
 import re
 from operator import itemgetter
-import string
 
 
 def find_news(period, *args):
@@ -141,9 +139,43 @@ def open_href(href, request):
     description = soup.find('div', {'class': 'css-g5mtbi-Text'}).get_text()
     date_public = soup.find('span', {'class': 'css-19yf5ek'}).get_text()
 
-    #Если объявление было выложено в этот день с надписью "Сегодня" ты форматируем в привычный формат
-    if re.search(r'Сегодня', f"{date_public}"):
-        date_public = datetime.today().strftime('%d %B %Y г.')
+    # Если объявление было выложено в этот день с надписью "Сегодня" ты форматируем в привычный формат
+    if re.search('Сегодня', f'{date_public}'):
+        date_public = datetime.today().strftime('%Y.%m.%d')
+    else:
+        d_m_y = date_public.split(' ')
+        day = d_m_y[0]
+        month = d_m_y[1]
+        year = d_m_y[2]
+        if re.search(r'янв', month):
+            month = '01'
+        elif re.search(r'фев', month):
+            month = '02'
+        elif re.search(r'мар', month):
+            month = '03'
+        elif re.search(r'апр', month):
+            month = '04'
+        elif re.search(r'ма', month):
+            month = '05'
+        elif re.search(r'июн', month):
+            month = '06'
+        elif re.search(r'июл', month):
+            month = '07'
+        elif re.search(r'авг', month):
+            month = '08'
+        elif re.search(r'сен', month):
+            month = '09'
+        elif re.search(r'окт', month):
+            month = '10'
+        elif re.search(r'ноя', month):
+            month = '11'
+        elif re.search(r'дек', month):
+            month = '12'
+
+        date_public = datetime(int(year), int(month), int(day))
+        date_public = date_public.strftime('%Y.%m.%d')
+
+
     return [request, date_public, href, description]
 
 
@@ -151,8 +183,9 @@ def main_foo():
     #list of requests
     list_of_requests = ['рога сайгака', 'степная черепаха',
                         'среднеазиатская черепаха', 'живая черепаха', 'продам черепаху']
-
-    #list of result data
+    #
+    # list_of_requests = ['рога сайгака']
+    # list of result data
     list_result = []
 
     # ПЕРЕБОР ЗАПРОСОВ ИЗ list_of_requests
@@ -160,15 +193,23 @@ def main_foo():
         url_olx = f'https://www.olx.kz/list/q-{i}/'
         page = requests.get(url_olx) #извлекаем данные в переменную
         soup = BeautifulSoup(page.text, 'html.parser') #сохраняем html страницы, откуда будем извлекать данные
-        pages = len(soup.findAll('span', {"class": "item"})) #кол-во страниц, доступных для перелистывания
-
-        if re.search(r'Не найдено', f"{soup.find_all('p')[3].get_text()}"):
-            print('Не найдено объявлений')
-            continue
-        if re.search(r'Топ', f"{soup.find_all('h2')[0].get_text()}"):
-            print(f"По запросу '{i}' {soup.find_all('p')[7].get_text()}")
-        else:
-            print(f"По запросу '{i}' {soup.find_all('h2')[1].get_text()}")
+        pages = len(soup.findAll('li', {"class": "brmwmy"})) #кол-во страниц, доступных для перелистывания
+        # s = soup.find_all('h3')
+        # if re.search(r'Мы нашли 0', f"{soup.find_all('div')[0].get_text()}"):
+        #     print('Не найдено объявлений')
+        #     continue
+        # if re.search(r'Топ', f"{soup.find_all('h2')[0].get_text()}"):
+        #     print(f"По запросу '{i}' {soup.find_all('h3')[0].get_text()}")
+        # else:
+        #     print(f"По запросу '{i}' {soup.find_all('h3')[0].get_text()}")
+        #
+        # # if re.search(r'Не найдено', f"{soup.find_all('p')[3].get_text()}"):
+        #     print('Не найдено объявлений')
+        #     continue
+        # if re.search(r'Топ', f"{soup.find_all('h2')[0].get_text()}"):
+        #     print(f"По запросу '{i}' {soup.find_all('p')[7].get_text()}")
+        # else:
+        #     print(f"По запросу '{i}' {soup.find_all('h2')[1].get_text()}")
 
 
         #Если всего одна страница, то присвоем ей номер 1, чтобы цикл for начался
@@ -176,27 +217,27 @@ def main_foo():
             pages = 1
 
         for p in range(1, pages+1): #перебор всех страниц по запросу
-            url_olx = f'https://www.olx.kz/list/q-{i}/?page={p}'
+            url_olx = f'https://www.olx.kz/d/list/q-{i}/?page={p}'
             page = requests.get(url_olx)
             soup = BeautifulSoup(page.text, 'html.parser')
 
             # Кол-во объявлений на каждой странице
-            list_of_ads = soup.findAll('a', {"class": "thumb"})
+            list_of_ads = soup.find_all('a', {'class': 'css-1bbgabe'})
 
             # Перебор всех объявлений со страницы и достаем от туда href
             for ad in list_of_ads:
 
                 # Если этого объявления еще нет в list_href, то добавляем
                 if ad.__getattribute__('attrs')['href'] not in list_result:
-                    href = ad.__getattribute__('attrs')['href']
+                    href = f"https://olx.kz{ad.__getattribute__('attrs')['href']}"
                     list_result.append(open_href(href, i))
-            list_result = sorted(list_result, key=itemgetter(0, 1), reverse=True)
-            print(f'Кол-во ссылок после просмотра {p} страницы - {len(list_result)}')
+            # list_result = sorted(list_result, key=itemgetter(0, 1), reverse=True)
+            # print(f'Кол-во ссылок после просмотра {p} страницы - {len(list_result)}')
     return list_result
 
 
 if __name__ == '__main__':
     # main_foo()
-    find_news('p', '1.1.2020', '2.2.2020')
+    find_news('p', '1.1.2021', '31.5.2021')
     # find_news('m')
     # open_href()

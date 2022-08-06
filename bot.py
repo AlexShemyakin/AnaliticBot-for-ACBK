@@ -1,12 +1,12 @@
 import telebot
 from telebot import types
 from test_sxls import excel as ex, excel_news as exnw
-# import sched
+from settings import TOKEN as TOKEN
 import time
 
 
 def start_bot():
-    token = '5592992190:AAHDKnVr3bEq5oDTKbslJcMQiCUygdBc9Os'
+    token = TOKEN
     bot = telebot.TeleBot(token)
 
     # активация командой start

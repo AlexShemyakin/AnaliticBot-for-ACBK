@@ -19,7 +19,7 @@ def find_news(period, *args):
     count_pages = 0
     firefox_options = Options()
     firefox_options.add_argument('user-data-dir=selenium')
-    # firefox_options.add_argument("--headless")
+    firefox_options.add_argument("--headless")
     driver = webdriver.Firefox(executable_path=GeckoDriverManager().install(), options=firefox_options)
     driver.get('https://google.com/')
 

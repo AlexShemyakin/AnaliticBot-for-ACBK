@@ -1,0 +1,10 @@
+settings.py
+.idea
+bin
+include
+lib
+lib64
+share
+geckodriver
+geckodriver.log
+pyvenv.cfg

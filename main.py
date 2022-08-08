@@ -185,6 +185,7 @@ def main_foo():
                         'среднеазиатская черепаха', 'живая черепаха', 'продам черепаху']
     #
     # list_of_requests = ['рога сайгака']
+
     # list of result data
     list_result = []
 
@@ -194,23 +195,6 @@ def main_foo():
         page = requests.get(url_olx) #извлекаем данные в переменную
         soup = BeautifulSoup(page.text, 'html.parser') #сохраняем html страницы, откуда будем извлекать данные
         pages = len(soup.findAll('li', {"class": "brmwmy"})) #кол-во страниц, доступных для перелистывания
-        # s = soup.find_all('h3')
-        # if re.search(r'Мы нашли 0', f"{soup.find_all('div')[0].get_text()}"):
-        #     print('Не найдено объявлений')
-        #     continue
-        # if re.search(r'Топ', f"{soup.find_all('h2')[0].get_text()}"):
-        #     print(f"По запросу '{i}' {soup.find_all('h3')[0].get_text()}")
-        # else:
-        #     print(f"По запросу '{i}' {soup.find_all('h3')[0].get_text()}")
-        #
-        # # if re.search(r'Не найдено', f"{soup.find_all('p')[3].get_text()}"):
-        #     print('Не найдено объявлений')
-        #     continue
-        # if re.search(r'Топ', f"{soup.find_all('h2')[0].get_text()}"):
-        #     print(f"По запросу '{i}' {soup.find_all('p')[7].get_text()}")
-        # else:
-        #     print(f"По запросу '{i}' {soup.find_all('h2')[1].get_text()}")
-
 
         #Если всего одна страница, то присвоем ей номер 1, чтобы цикл for начался
         if pages == 0:
@@ -231,8 +215,6 @@ def main_foo():
                 if ad.__getattribute__('attrs')['href'] not in list_result:
                     href = f"https://olx.kz{ad.__getattribute__('attrs')['href']}"
                     list_result.append(open_href(href, i))
-            # list_result = sorted(list_result, key=itemgetter(0, 1), reverse=True)
-            # print(f'Кол-во ссылок после просмотра {p} страницы - {len(list_result)}')
     return list_result
 
 

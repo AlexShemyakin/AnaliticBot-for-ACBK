@@ -111,15 +111,15 @@ def excel_news(period, *args):
     else:
         list_result = find_news('p', *args)
 
-    news_from_excel = news_from_excel()
+    data_from_excel = news_from_excel()
     flag = 0
     for i in list_result:
-        for j in news_from_excel:
+        for j in data_from_excel:
             if i[2] == j[2]: flag += 1
-        if flag == 0: news_from_excel.append(i)
+        if flag == 0: data_from_excel.append(i)
         else: flag = 0
 
-    news_from_excel = sorted(news_from_excel, key=lambda d: tuple(map(int, d[1].split('.'))))
+    data_from_excel = sorted(data_from_excel, key=lambda d: tuple(map(int, d[1].split('.'))))
 
     df = pd.DataFrame({'№': [], 'Имя запроса': [], 'Дата': [], 'URL объявления': [], 'Описание': []})
     df.to_excel('news.xlsx', sheet_name='Statistic', index=False)
@@ -131,7 +131,7 @@ def excel_news(period, *args):
     ws.column_dimensions[get_column_letter(4)].width = 50
     ws.column_dimensions[get_column_letter(5)].width = 50
     row = 2
-    for j in news_from_excel:
+    for j in data_from_excel:
         ws[f'A{row}'] = f'{row - 1}'
         ws[f'B{row}'] = f'{j[0]}'
         if j[1] != '0.0.0':

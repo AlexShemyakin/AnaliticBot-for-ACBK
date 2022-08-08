@@ -8,3 +8,4 @@ share
 geckodriver
 geckodriver.log
 pyvenv.cfg
+__pycache__

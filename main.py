@@ -10,6 +10,7 @@ import re
 from operator import itemgetter
 
 
+#поиск новостей
 def find_news(period, *args):
     list_key = ['контрабанда рогов сайгака', 'контрабанда сайгачьих рогов', 'незаконный вывоз рогов сайгака',
                 'контрабандный вывоз степных черепах', 'незаконный вывоз балобанов']
@@ -131,7 +132,7 @@ def find_news(period, *args):
     return list_result
 
 
-
+#открытие объявлений с olx.kz
 def open_href(href, request):
     url = f'{href}'
     page = requests.get(url)  # извлекаем данные в переменную
@@ -179,26 +180,35 @@ def open_href(href, request):
     return [request, date_public, href, description]
 
 
-def main_foo():
+#поиск на olx
+def pars_olx():
     #list of requests
     list_of_requests = ['рога сайгака', 'степная черепаха',
                         'среднеазиатская черепаха', 'живая черепаха', 'продам черепаху']
     #
-    # list_of_requests = ['рога сайгака']
+    # list_of_requests = ['рога']
 
     # list of result data
     list_result = []
 
     # ПЕРЕБОР ЗАПРОСОВ ИЗ list_of_requests
     for i in list_of_requests:
-        url_olx = f'https://www.olx.kz/list/q-{i}/'
-        page = requests.get(url_olx) #извлекаем данные в переменную
-        soup = BeautifulSoup(page.text, 'html.parser') #сохраняем html страницы, откуда будем извлекать данные
-        pages = len(soup.findAll('li', {"class": "brmwmy"})) #кол-во страниц, доступных для перелистывания
+        url_olx = f'https://www.olx.kz/d/list/q-{i}/'
+
+        # извлекаем данные в переменную
+        page = requests.get(url_olx)
+
+        # сохраняем html страницы, откуда будем извлекать данные
+        soup = BeautifulSoup(page.text, 'html.parser')
+
+        # кол-во страниц, доступных для перелистывания
+        pages = len(soup.find_all('a', {'class': 'css-1mi714g'}))
+
+        # pages = len(soup.findAll('li', {"class": "brmwmy"}))
 
         #Если всего одна страница, то присвоем ей номер 1, чтобы цикл for начался
-        if pages == 0:
-            pages = 1
+        if not pages:   pages = 1
+        else:   pages = int(soup.find_all('a', {'class': 'css-1mi714g'})[-1].get_text())
 
         for p in range(1, pages+1): #перебор всех страниц по запросу
             url_olx = f'https://www.olx.kz/d/list/q-{i}/?page={p}'
@@ -218,8 +228,402 @@ def main_foo():
     return list_result
 
 
+#открытие объявлений с edc.kz
+def open_href_edc(href, request):
+    url = f'{href}'
+    page = requests.get(url)  # извлекаем данные в переменную
+    soup = BeautifulSoup(page.text, 'html.parser')  # сохраняем html страницы, откуда будем извлекать данные
+    description = soup.find('div', {'class': 'c-article'}).get_text()
+    date_public = soup.find('span', {'class': 'nowrap'}).get_text()
+
+
+    d_m_y = date_public.split(' ')
+    day = d_m_y[2]
+    month = d_m_y[3]
+    if len(d_m_y) == 4:
+        year = datetime.today().year
+    else:
+        year = d_m_y[5]
+    if re.search(r'янв', month):
+        month = '01'
+    elif re.search(r'фев', month):
+        month = '02'
+    elif re.search(r'мар', month):
+        month = '03'
+    elif re.search(r'апр', month):
+        month = '04'
+    elif re.search(r'ма', month):
+        month = '05'
+    elif re.search(r'июн', month):
+        month = '06'
+    elif re.search(r'июл', month):
+        month = '07'
+    elif re.search(r'авг', month):
+        month = '08'
+    elif re.search(r'сен', month):
+        month = '09'
+    elif re.search(r'окт', month):
+        month = '10'
+    elif re.search(r'ноя', month):
+        month = '11'
+    elif re.search(r'дек', month):
+        month = '12'
+
+    date_public = datetime(int(year), int(month), int(day))
+    date_public = date_public.strftime('%Y.%m.%d')
+
+
+    return [request, date_public, href, description]
+
+
+#поиск на edc.kz
+def pars_edc():
+    #list of requests
+    list_of_requests = ['рога сайгака', 'степная черепаха',
+                        'среднеазиатская черепаха', 'живая черепаха', 'продам черепаху']
+    #
+    # list_of_requests = ['рога сайгака']
+
+    # list of result data
+    list_result = []
+
+    # ПЕРЕБОР ЗАПРОСОВ ИЗ list_of_requests
+    for i in list_of_requests:
+        url = f'https://edc.sale/ru/kz/search/?ct=0&lt=&fa=0&sort=&cur=&' \
+                  f'page=1&q={i}'
+
+        # извлекаем данные в переменную
+        page = requests.get(url)
+
+        # сохраняем html страницы, откуда будем извлекать данные
+        soup = BeautifulSoup(page.text, 'html.parser')
+
+        # кол-во страниц, доступных для перелистывания
+        pages = len(soup.findAll('li', {"class": "page-item"}))
+
+        #Если всего одна страница, то присвоем ей номер 1, чтобы цикл for начался
+        if pages == 0:
+            pages = 1
+
+        for p in range(1, pages+1): #перебор всех страниц по запросу
+            url = f'https://edc.sale/ru/kz/search/?ct=0&lt=&fa=0&sort=&cur=&' \
+                  f'page={p}&q={i}'
+            page = requests.get(url)
+            soup = BeautifulSoup(page.text, 'html.parser')
+
+            # Кол-во объявлений на каждой странице
+            list_of_ads = soup.findAll('div', {'class': 'it-grid-item-in'})
+            # if not list_of_ads:
+            #     break
+            # Перебор всех объявлений со страницы и достаем от туда href
+            for ad in list_of_ads:
+                href = ad.__getattribute__('contents')[1]
+                href = href.__getattribute__('attrs')['href']
+                # Если этого объявления еще нет в list_href, то добавляем
+                if href not in list_result:
+                    href = f"https://edc.sale/ru/{href}"
+                    list_result.append(open_href_edc(href, i))
+    return list_result
+
+
+#поиск на market.kz
+def pars_market():
+    #list of requests
+    list_of_requests = ['рога сайгака', 'степная черепаха',
+                        'среднеазиатская черепаха', 'живая черепаха', 'продам черепаху']
+    #
+    # list_of_requests = ['рога']
+
+    # list of result data
+    list_result = []
+
+    # ПЕРЕБОР ЗАПРОСОВ ИЗ list_of_requests
+    for i in list_of_requests:
+        url = f'https://market.kz/k--{i}'
+
+        # извлекаем данные в переменную
+        page = requests.get(url)
+
+        # сохраняем html страницы, откуда будем извлекать данные
+        soup = BeautifulSoup(page.text, 'html.parser')
+
+        # кол-во страниц, доступных для перелистывания
+        pages = len(soup.findAll('div', {"class": "pagination"}))
+        if pages:
+            pages = soup.find('div', {"class": "pagination"}).__getattribute__('contents')
+            pages = len(pages[0].__getattribute__('contents'))
+        else:
+            pages = 1
+
+        for p in range(1, pages+1): #перебор всех страниц по запросу
+            url = f'https://market.kz/k--{i}/?page={p}'
+            page = requests.get(url)
+            soup = BeautifulSoup(page.text, 'html.parser')
+
+            # Кол-во объявлений на каждой странице
+            list_of_ads = soup.findAll('div', {'class': 'a-card__content'})
+            # if not list_of_ads:
+            #     break
+            # Перебор всех объявлений со страницы и достаем от туда href
+            for ad in list_of_ads:
+                temp = ad.__getattribute__('contents')[1]
+                temp = temp.__getattribute__('contents')[1]
+
+                href = temp.__getattribute__('attrs')['href']
+
+                desrciption = temp.__getattribute__('contents')[1]
+                desrciption = desrciption.__getattribute__('attrs')['alt']
+
+                date_public = soup.find('div', {'class': "card-stats"}).__getattribute__('contents')[3]
+                date_public = date_public.__getattribute__('contents')[1]
+                date_public = date_public.__getattribute__('contents')[0]
+
+                d_m_y = date_public.split(' ')
+                day = d_m_y[0]
+                month = d_m_y[1]
+                year = d_m_y[2]
+                # if len(d_m_y) == 4:
+                #     year = datetime.today().year
+                # else:
+                #     year = d_m_y[5]
+                if re.search(r'янв', month):
+                    month = '01'
+                elif re.search(r'фев', month):
+                    month = '02'
+                elif re.search(r'мар', month):
+                    month = '03'
+                elif re.search(r'апр', month):
+                    month = '04'
+                elif re.search(r'ма', month):
+                    month = '05'
+                elif re.search(r'июн', month):
+                    month = '06'
+                elif re.search(r'июл', month):
+                    month = '07'
+                elif re.search(r'авг', month):
+                    month = '08'
+                elif re.search(r'сен', month):
+                    month = '09'
+                elif re.search(r'окт', month):
+                    month = '10'
+                elif re.search(r'ноя', month):
+                    month = '11'
+                elif re.search(r'дек', month):
+                    month = '12'
+
+                date_public = datetime(int(year), int(month), int(day))
+                date_public = date_public.strftime('%Y.%m.%d')
+
+                temp_list = [i, date_public, href, desrciption]
+                print(temp_list)
+                list_result.append(temp_list)
+    return list_result
+
+
+#ДОРАБОТАТЬ поиск на salaxy.kz
+def pars_salaxy():
+    #list of requests
+    list_of_requests = ['рога сайгака', 'степная черепаха',
+                        'среднеазиатская черепаха', 'живая черепаха', 'черепаху']
+    #
+    # list_of_requests = ['продам черепаху']
+
+    # list of result data
+    list_result = []
+
+    # ПЕРЕБОР ЗАПРОСОВ ИЗ list_of_requests
+    for i in list_of_requests:
+        url = f'https://salexy.kz/all?Filter%5Bdistrict_id%5D=&Filter%5Bsearch_string%5D={i}'
+
+
+        # извлекаем данные в переменную
+        page = requests.get(url)
+
+        # сохраняем html страницы, откуда будем извлекать данные
+        soup = BeautifulSoup(page.text, 'html.parser')
+
+        # кол-во страниц, доступных для перелистывания
+        pages = len(soup.findAll('li', {"class": "page"}))
+        if not pages:
+            pages = 1
+
+        for p in range(1, pages+1): #перебор всех страниц по запросу
+            url = f'https://salexy.kz/all?Filter%5Bdistrict_id%5D=&Filter%5Bsearch_string%5D={i}#page={p}'
+            page = requests.get(url)
+            soup = BeautifulSoup(page.text, 'html.parser')
+
+            # Кол-во объявлений на каждой странице
+            # list_of_ads = soup.findAll('div', {'class': 'content'})
+            # if not list_of_ads:
+            #     break
+
+            #Флаг, определяющий кол-во объявлений до лишних объявлений с другого города
+            flag = soup.find('ul', {'class': 'product-list'})
+            flag = flag.__getattribute__('contents')
+
+            for ad in flag:
+                if ad == '\n':
+                    continue
+                elif ad.text.isspace():
+                    continue
+                elif re.search('соседн', ad.text):
+                    break
+
+                temp = ad.__getattribute__('contents')[3]
+                temp = temp.__getattribute__('contents')[1]
+                temp = temp.__getattribute__('contents')[1]
+
+                desrciption = temp.__getattribute__('contents')[1].text
+
+                href = temp.__getattribute__('contents')[1]
+                href = href.__getattribute__('contents')[0]
+                href = href.__getattribute__('attrs')['href']
+
+                date_public = temp.__getattribute__('contents')[7]
+                try:
+                    date_public = date_public.__getattribute__('contents')[1].text
+                    d_m_y = date_public.split('.')
+                    day = d_m_y[0]
+                    month = d_m_y[1]
+                    year = d_m_y[2]
+
+                    date_public = datetime(int(year), int(month), int(day))
+                    date_public = date_public.strftime('%Y.%m.%d')
+                except IndexError:
+                    date_public = ''
+
+
+                temp_list = [i, date_public, href, desrciption]
+                list_result.append(temp_list)
+                print(temp_list)
+
+            # Перебор всех объявлений со страницы и достаем от туда href
+            # for ad in list_of_ads:
+            #     check = ad.__getattribute__('parent')
+            #     if check.__getattribute__('attrs')['class']:
+            #         continue
+            #     temp = ad.__getattribute__('contents')[1]
+            #     temp = temp.__getattribute__('contents')[1]
+            #     temp_2 = temp.__getattribute__('contents')[1]
+            #     temp_2 = temp_2.__getattribute__('contents')[0]
+            #
+            #     href = temp_2.__getattribute__('attrs')['href']
+            #
+            #     desrciption = temp_2.__getattribute__('text')
+            #
+            #     date_public = temp.__getattribute__('contents')[7]
+            #     try:
+            #         date_public = date_public.__getattribute__('contents')[1].text
+            #         d_m_y = date_public.split('.')
+            #         day = d_m_y[0]
+            #         month = d_m_y[1]
+            #         year = d_m_y[2]
+            #
+            #         date_public = datetime(int(year), int(month), int(day))
+            #         date_public = date_public.strftime('%Y.%m.%d')
+            #     except IndexError:
+            #         date_public = ''
+            #
+            #
+            #     temp_list = [i, date_public, href, desrciption]
+            #     list_result.append(temp_list)
+            #     print(temp_list)
+    return list_result
+
+
+#ДОРАБОТАТЬ поиск на slanet.kz
+def pars_slanet():
+    #list of requests
+    # list_of_requests = ['рога сайгака', 'степная черепаха',
+    #                     'среднеазиатская черепаха', 'живая черепаха', 'черепаха']
+
+    list_of_requests = ['телефон']
+
+    # list of result data
+    list_result = []
+
+    # ПЕРЕБОР ЗАПРОСОВ ИЗ list_of_requests
+    for i in list_of_requests:
+        url = f'https://slanet.kz/index.php?page=search&sOrder=dt_pub_date&iOrderType=desc&sPattern={i}'
+
+
+        # извлекаем данные в переменную
+        page = requests.get(url)
+
+        # сохраняем html страницы, откуда будем извлекать данные
+        soup = BeautifulSoup(page.text, 'html.parser')
+
+        # кол-во страниц, доступных для перелистывания
+        pages = soup.find_all('a', {'class': "list-last"})
+        if pages:
+            pages = pages[0].__getattribute__('attrs')['href']
+            pages = int(pages[-1:])
+        else:
+            pages = len(soup.find_all('a', {'class': "searchPaginationNonSelected"}))
+            if not pages:
+                pages = 1
+
+        for p in range(1, pages+1): #перебор всех страниц по запросу
+            url = f'https://slanet.kz/index.php?page=search&sOrder=dt_pub_date&iOrderType=desc&sPattern={i}&iPage={p}'
+            page = requests.get(url)
+            soup = BeautifulSoup(page.text, 'html.parser')
+
+            # Объявления на каждой странице
+            list_of_ads = soup.findAll('div', {'class': 'grid'})
+            if not list_of_ads:
+                 break
+
+            # Перебор всех объявлений со страницы и достаем от туда href
+            for ad in list_of_ads[0].__getattribute__('contents'):
+                if ad == '\n':
+                    continue
+                elif ad == ' ':
+                    continue
+
+                #Определение общего html
+                temp = ad.__getattribute__('contents')[1]
+                temp = temp.__getattribute__('contents')[1]
+
+                #Выделение href
+                href = temp.__getattribute__('contents')[1]
+                href = href.__getattribute__('attrs')['href']
+
+                #Выделение даты
+                date_public = temp.__getattribute__('contents')[3]
+                date_public = date_public.__getattribute__('text')
+                date_public = date_public.split(' ')
+                count = date_public[0]
+
+                if re.search('нед', date_public[1]):
+                    date_public = datetime.today() - timedelta(weeks=int(count))
+                elif re.search('месяц', date_public[1]):
+                    date_public = datetime.today() - timedelta(weeks=int(count) * 4)
+                elif re.search('час', date_public[1]):
+                    date_public = datetime.today() - timedelta(hours=int(count))
+                else:
+                    date_public = ''
+                date_public = date_public.strftime('%Y.%m.%d')
+
+                # Выделение описания
+                desrciption = temp.__getattribute__('contents')[1]
+                desrciption = desrciption.__getattribute__('contents')[0]
+                desrciption = desrciption.__getattribute__('attrs')['alt']
+
+                temp_list = [i, date_public, href, desrciption]
+                list_result.append(temp_list)
+
+                print(temp_list)
+                print('\n')
+    return list_result
+
+
+
 if __name__ == '__main__':
-    # main_foo()
-    find_news('p', '1.1.2021', '31.5.2021')
+    # edc_sale()
+    # pars_olx()
+    # pars_slanet()
+    # pars_salaxy()
+    pars_market()
+    # find_news('p', '1.1.2021', '31.5.2021')
     # find_news('m')
     # open_href()

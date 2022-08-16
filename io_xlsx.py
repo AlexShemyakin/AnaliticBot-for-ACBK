@@ -2,12 +2,12 @@ from openpyxl import load_workbook
 from openpyxl.utils.cell import get_column_letter
 from openpyxl.styles import Alignment
 import pandas as pd
-from main import main_foo, find_news
+from main import pars_olx, find_news, pars_edc, pars_market, pars_slanet
 from operator import itemgetter
 from datetime import datetime
 import re
 
-
+#Считываем данные о новостях из excel
 def news_from_excel():
     wb = load_workbook(filename='news.xlsx')
     ws = wb['Statistic']
@@ -56,7 +56,7 @@ def news_from_excel():
 
     return list_from_excel
 
-
+#Считываем данные об объявлениях из excel
 def advert_from_excel():
     wb = load_workbook(filename='ads.xlsx')
     ws = wb['Statistic']
@@ -103,7 +103,7 @@ def advert_from_excel():
 
     return list_from_excel
 
-
+#Запись новостей в excel
 def excel_news(period, *args):
 
     if period == 'm':
@@ -185,10 +185,19 @@ def excel_news(period, *args):
     wb.close()
     return
 
-
+#Запись объявлений в excel
 def excel():
+    list_result = pars_olx()
+    rslt_edc = pars_edc()
+    rslt_market = pars_market()
+    rslt_slanet = pars_slanet()
+    for i in rslt_edc:
+        list_result.append(i)
+    for i in rslt_market:
+        list_result.append(i)
+    for i in rslt_slanet:
+        list_result.append(i)
 
-    list_result = main_foo()
     data_from_excel = advert_from_excel()
 
     flag = 0

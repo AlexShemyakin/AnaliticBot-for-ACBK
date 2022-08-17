@@ -10,6 +10,37 @@ import re
 from operator import itemgetter
 
 
+def find_month(month):
+    if re.search(r'янв', month):
+        month = '01'
+    elif re.search(r'фев', month):
+        month = '02'
+    elif re.search(r'мар', month):
+        month = '03'
+    elif re.search(r'апр', month):
+        month = '04'
+    elif re.search(r'ма', month):
+        month = '05'
+    elif re.search(r'июн', month):
+        month = '06'
+    elif re.search(r'июл', month):
+        month = '07'
+    elif re.search(r'авг', month):
+        month = '08'
+    elif re.search(r'сен', month):
+        month = '09'
+    elif re.search(r'окт', month):
+        month = '10'
+    elif re.search(r'ноя', month):
+        month = '11'
+    elif re.search(r'дек', month):
+        month = '12'
+    else:
+        month = ' '
+
+    return month
+
+
 #поиск новостей
 def find_news(period, *args):
     list_key = ['контрабанда рогов сайгака', 'контрабанда сайгачьих рогов', 'незаконный вывоз рогов сайгака',
@@ -82,31 +113,8 @@ def find_news(period, *args):
                     day = d_m_y[0]
                     month = d_m_y[1]
                     year = d_m_y[2]
-                    if re.search(r'янв', month):
-                        month = '01'
-                    elif re.search(r'фев', month):
-                        month = '02'
-                    elif re.search(r'мар', month):
-                        month = '03'
-                    elif re.search(r'апр', month):
-                        month = '04'
-                    elif re.search(r'ма', month):
-                        month = '05'
-                    elif re.search(r'июн', month):
-                        month = '06'
-                    elif re.search(r'июл', month):
-                        month = '07'
-                    elif re.search(r'авг', month):
-                        month = '08'
-                    elif re.search(r'сен', month):
-                        month = '09'
-                    elif re.search(r'окт', month):
-                        month = '10'
-                    elif re.search(r'ноя', month):
-                        month = '11'
-                    elif re.search(r'дек', month):
-                        month = '12'
 
+                    month = find_month(month)
 
                     date_public = datetime(int(year), int(month), int(day))
                     date_public = date_public.strftime('%Y.%m.%d')
@@ -128,7 +136,6 @@ def find_news(period, *args):
             search.click()
 
     driver.close()
-    # list_result = sorted(list_result, key=itemgetter(0, 1, 2), reverse=True)
     return list_result
 
 
@@ -148,34 +155,11 @@ def open_href(href, request):
         day = d_m_y[0]
         month = d_m_y[1]
         year = d_m_y[2]
-        if re.search(r'янв', month):
-            month = '01'
-        elif re.search(r'фев', month):
-            month = '02'
-        elif re.search(r'мар', month):
-            month = '03'
-        elif re.search(r'апр', month):
-            month = '04'
-        elif re.search(r'ма', month):
-            month = '05'
-        elif re.search(r'июн', month):
-            month = '06'
-        elif re.search(r'июл', month):
-            month = '07'
-        elif re.search(r'авг', month):
-            month = '08'
-        elif re.search(r'сен', month):
-            month = '09'
-        elif re.search(r'окт', month):
-            month = '10'
-        elif re.search(r'ноя', month):
-            month = '11'
-        elif re.search(r'дек', month):
-            month = '12'
+
+        month = find_month(month)
 
         date_public = datetime(int(year), int(month), int(day))
         date_public = date_public.strftime('%Y.%m.%d')
-
 
     return [request, date_public, href, description]
 
@@ -185,8 +169,6 @@ def pars_olx():
     #list of requests
     list_of_requests = ['рога сайгака', 'степная черепаха',
                         'среднеазиатская черепаха', 'живая черепаха', 'продам черепаху']
-    #
-    # list_of_requests = ['рога']
 
     # list of result data
     list_result = []
@@ -244,34 +226,11 @@ def open_href_edc(href, request):
         year = datetime.today().year
     else:
         year = d_m_y[5]
-    if re.search(r'янв', month):
-        month = '01'
-    elif re.search(r'фев', month):
-        month = '02'
-    elif re.search(r'мар', month):
-        month = '03'
-    elif re.search(r'апр', month):
-        month = '04'
-    elif re.search(r'ма', month):
-        month = '05'
-    elif re.search(r'июн', month):
-        month = '06'
-    elif re.search(r'июл', month):
-        month = '07'
-    elif re.search(r'авг', month):
-        month = '08'
-    elif re.search(r'сен', month):
-        month = '09'
-    elif re.search(r'окт', month):
-        month = '10'
-    elif re.search(r'ноя', month):
-        month = '11'
-    elif re.search(r'дек', month):
-        month = '12'
+
+    month = find_month(month)
 
     date_public = datetime(int(year), int(month), int(day))
     date_public = date_public.strftime('%Y.%m.%d')
-
 
     return [request, date_public, href, description]
 
@@ -331,8 +290,6 @@ def pars_market():
     #list of requests
     list_of_requests = ['рога сайгака', 'степная черепаха',
                         'среднеазиатская черепаха', 'живая черепаха', 'продам черепаху']
-    #
-    # list_of_requests = ['рога']
 
     # list of result data
     list_result = []
@@ -362,8 +319,7 @@ def pars_market():
 
             # Кол-во объявлений на каждой странице
             list_of_ads = soup.findAll('div', {'class': 'a-card__content'})
-            # if not list_of_ads:
-            #     break
+
             # Перебор всех объявлений со страницы и достаем от туда href
             for ad in list_of_ads:
                 temp = ad.__getattribute__('contents')[1]
@@ -382,34 +338,8 @@ def pars_market():
                 day = d_m_y[0]
                 month = d_m_y[1]
                 year = d_m_y[2]
-                # if len(d_m_y) == 4:
-                #     year = datetime.today().year
-                # else:
-                #     year = d_m_y[5]
-                if re.search(r'янв', month):
-                    month = '01'
-                elif re.search(r'фев', month):
-                    month = '02'
-                elif re.search(r'мар', month):
-                    month = '03'
-                elif re.search(r'апр', month):
-                    month = '04'
-                elif re.search(r'ма', month):
-                    month = '05'
-                elif re.search(r'июн', month):
-                    month = '06'
-                elif re.search(r'июл', month):
-                    month = '07'
-                elif re.search(r'авг', month):
-                    month = '08'
-                elif re.search(r'сен', month):
-                    month = '09'
-                elif re.search(r'окт', month):
-                    month = '10'
-                elif re.search(r'ноя', month):
-                    month = '11'
-                elif re.search(r'дек', month):
-                    month = '12'
+
+                month = find_month(month)
 
                 date_public = datetime(int(year), int(month), int(day))
                 date_public = date_public.strftime('%Y.%m.%d')
@@ -420,13 +350,11 @@ def pars_market():
     return list_result
 
 
-#ДОРАБОТАТЬ поиск на salaxy.kz
+#поиск на salaxy.kz
 def pars_salaxy():
     #list of requests
     list_of_requests = ['рога сайгака', 'степная черепаха',
                         'среднеазиатская черепаха', 'живая черепаха', 'черепаху']
-    #
-    # list_of_requests = ['продам черепаху']
 
     # list of result data
     list_result = []
@@ -434,7 +362,6 @@ def pars_salaxy():
     # ПЕРЕБОР ЗАПРОСОВ ИЗ list_of_requests
     for i in list_of_requests:
         url = f'https://salexy.kz/all?Filter%5Bdistrict_id%5D=&Filter%5Bsearch_string%5D={i}'
-
 
         # извлекаем данные в переменную
         page = requests.get(url)
@@ -451,11 +378,6 @@ def pars_salaxy():
             url = f'https://salexy.kz/all?Filter%5Bdistrict_id%5D=&Filter%5Bsearch_string%5D={i}#page={p}'
             page = requests.get(url)
             soup = BeautifulSoup(page.text, 'html.parser')
-
-            # Кол-во объявлений на каждой странице
-            # list_of_ads = soup.findAll('div', {'class': 'content'})
-            # if not list_of_ads:
-            #     break
 
             #Флаг, определяющий кол-во объявлений до лишних объявлений с другого города
             flag = soup.find('ul', {'class': 'product-list'})
@@ -497,47 +419,14 @@ def pars_salaxy():
                 list_result.append(temp_list)
                 print(temp_list)
 
-            # Перебор всех объявлений со страницы и достаем от туда href
-            # for ad in list_of_ads:
-            #     check = ad.__getattribute__('parent')
-            #     if check.__getattribute__('attrs')['class']:
-            #         continue
-            #     temp = ad.__getattribute__('contents')[1]
-            #     temp = temp.__getattribute__('contents')[1]
-            #     temp_2 = temp.__getattribute__('contents')[1]
-            #     temp_2 = temp_2.__getattribute__('contents')[0]
-            #
-            #     href = temp_2.__getattribute__('attrs')['href']
-            #
-            #     desrciption = temp_2.__getattribute__('text')
-            #
-            #     date_public = temp.__getattribute__('contents')[7]
-            #     try:
-            #         date_public = date_public.__getattribute__('contents')[1].text
-            #         d_m_y = date_public.split('.')
-            #         day = d_m_y[0]
-            #         month = d_m_y[1]
-            #         year = d_m_y[2]
-            #
-            #         date_public = datetime(int(year), int(month), int(day))
-            #         date_public = date_public.strftime('%Y.%m.%d')
-            #     except IndexError:
-            #         date_public = ''
-            #
-            #
-            #     temp_list = [i, date_public, href, desrciption]
-            #     list_result.append(temp_list)
-            #     print(temp_list)
     return list_result
 
 
-#ДОРАБОТАТЬ поиск на slanet.kz
+#поиск на slanet.kz
 def pars_slanet():
     #list of requests
-    # list_of_requests = ['рога сайгака', 'степная черепаха',
-    #                     'среднеазиатская черепаха', 'живая черепаха', 'черепаха']
-
-    list_of_requests = ['телефон']
+    list_of_requests = ['рога сайгака', 'степная черепаха',
+                        'среднеазиатская черепаха', 'живая черепаха', 'черепаха']
 
     # list of result data
     list_result = []
@@ -545,7 +434,6 @@ def pars_slanet():
     # ПЕРЕБОР ЗАПРОСОВ ИЗ list_of_requests
     for i in list_of_requests:
         url = f'https://slanet.kz/index.php?page=search&sOrder=dt_pub_date&iOrderType=desc&sPattern={i}'
-
 
         # извлекаем данные в переменную
         page = requests.get(url)
@@ -617,13 +505,105 @@ def pars_slanet():
     return list_result
 
 
+#поиск на avi.kz
+def pars_avi():
+    #list of requests
+    list_of_requests = ['рога сайгака', 'степная черепаха',
+                        'среднеазиатская черепаха', 'живая черепаха']
+
+    # list of result data
+    list_result = []
+
+    # ПЕРЕБОР ЗАПРОСОВ ИЗ list_of_requests
+    for i in list_of_requests:
+        url = f'https://avi.kz/search/?ct=0&lt=0&sort=&page=1&q={i}'
+
+        # извлекаем данные в переменную
+        page = requests.get(url)
+
+        # сохраняем html страницы, откуда будем извлекать данные
+        soup = BeautifulSoup(page.text, 'html.parser')
+
+        # кол-во страниц, доступных для перелистывания
+        pages = len(soup.find_all('a', {'class': "j-pgn-page"}))
+        if pages < 3:
+            pages = 2
+        elif pages >= 3:
+            pages = pages - 1
+        else:
+            pages = 1
+
+        # перебор всех страниц по запросу
+        for p in range(1, pages+1):
+            url = f'https://avi.kz/search/?ct=0&lt=0&sort=&page={p}&q={i}'
+            page = requests.get(url)
+            soup = BeautifulSoup(page.text, 'html.parser')
+
+            # Объявления на каждой странице
+            list_of_ads = soup.find_all('div', {'class': 'sr-2-list-item-n-body'})
+
+            # Перебор всех объявлений со страницы и достаем от туда href
+            for ad in list_of_ads:
+
+                #Выделение href
+                href = ad.__getattribute__('contents')[3]
+                href = href.__getattribute__('contents')[1]
+                href = href.__getattribute__('attrs')['href']
+
+                #Выделение даты
+                try:
+                    date_public = ad.__getattribute__('contents')[7]
+                except:
+                    date_public = ad.__getattribute__('contents')[5]
+                date_public = date_public.__getattribute__('contents')[3].text
+                date_public = date_public.split(' ')
+
+                if len(date_public) == 2:
+                    year = datetime.today().year
+                    day = date_public[0]
+                    month = date_public[1]
+
+                    month = find_month(month)
+
+                    date_public = datetime(int(year), int(month), int(day))
+
+                elif len(date_public) == 1:
+                    temp = date_public[0]
+                    if re.search('Сегодн', temp):
+                        date_public = datetime.today()
+                    elif re.search('Вчера', temp):
+                        date_public = datetime.today() - timedelta(days=1)
+
+                elif len(date_public) == 3:
+                    day = date_public[0]
+                    month = date_public[1]
+                    year = date_public[2]
+
+                    month = find_month(month)
+
+                    date_public = datetime(int(year), int(month), int(day))
+
+                date_public = date_public.strftime('%Y.%m.%d')
+
+                # Выделение описания
+                desrciption = ad.__getattribute__('contents')[3]
+                desrciption = desrciption.__getattribute__('contents')[1].text
+
+                temp_list = [i, date_public, href, desrciption]
+                list_result.append(temp_list)
+
+                print(temp_list)
+                print('\n')
+    return list_result
+
 
 if __name__ == '__main__':
     # edc_sale()
     # pars_olx()
     # pars_slanet()
     # pars_salaxy()
-    pars_market()
+    # pars_market()
     # find_news('p', '1.1.2021', '31.5.2021')
+    pars_avi()
     # find_news('m')
     # open_href()

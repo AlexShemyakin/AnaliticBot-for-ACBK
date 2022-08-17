@@ -2,7 +2,7 @@ from openpyxl import load_workbook
 from openpyxl.utils.cell import get_column_letter
 from openpyxl.styles import Alignment
 import pandas as pd
-from main import pars_olx, find_news, pars_edc, pars_market, pars_slanet
+from main import pars_olx, find_news, pars_edc, pars_market, pars_slanet, pars_avi
 from operator import itemgetter
 from datetime import datetime
 import re
@@ -191,6 +191,7 @@ def excel():
     rslt_edc = pars_edc()
     rslt_market = pars_market()
     rslt_slanet = pars_slanet()
+    rslt_avi = pars_avi
     for i in rslt_edc:
         list_result.append(i)
     for i in rslt_market:

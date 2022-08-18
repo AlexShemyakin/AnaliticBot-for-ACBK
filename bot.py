@@ -110,7 +110,7 @@ def start_bot():
             day = message.text[:2]
             month = message.text[3:5]
             year = message.text[-2:]
-            start_date = f'{month}.{day}.{year}'
+            start_date = f'{month}/{day}/{year}'
 
             flag = 1
             bot.send_message(message.from_user.id,
@@ -123,7 +123,7 @@ def start_bot():
             day = message.text[:2]
             month = message.text[3:5]
             year = message.text[-2:]
-            end_date = f'{month}.{day}.{year}'
+            end_date = f'{month}/{day}/{year}'
 
             markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
             btn1 = types.KeyboardButton("About")

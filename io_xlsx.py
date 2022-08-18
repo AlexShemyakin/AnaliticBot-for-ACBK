@@ -141,24 +141,10 @@ def excel_news(period, *args):
             ws[f'C{row}'] = f'{date}'
         else:
             ws[f'C{row}'] = 'б/д'
-        # date_public = date_public.strftime('%Y.%m.%d')
+
         ws[f'D{row}'] = f'{j[2]}'
         ws[f'E{row}'] = f'{j[3]}'
         row += 1
-
-    # for j in list_result:
-    #     count = True
-    #     for i in ws['D']:
-    #         if j[2] == i.value:
-    #             count = False
-    #             break
-    #     if count:
-    #         ws[f'A{row}'] = f'{row - 1}'
-    #         ws[f'B{row}'] = f'{j[0]}'
-    #         ws[f'C{row}'] = f'{j[1]}'
-    #         ws[f'D{row}'] = f'{j[2]}'
-    #         ws[f'E{row}'] = f'{j[3]}'
-    #         row += 1
 
     alignment = Alignment(horizontal='left', vertical='center', wrap_text=True)
     alignment_headers = Alignment(horizontal='center', vertical='center')
@@ -169,7 +155,7 @@ def excel_news(period, *args):
     for cell in ws['C']:
         cell.alignment = alignment
     for cell in ws['D']:
-        cell.alignment = alignment
+        cell.alignment = Alignment(horizontal='left', vertical='top', wrap_text=True)
     for cell in ws['E']:
         cell.alignment = Alignment(horizontal='left', vertical='top', wrap_text=True)
 
@@ -244,7 +230,7 @@ def excel():
     for cell in ws['C']:
         cell.alignment = alignment
     for cell in ws['D']:
-        cell.alignment = alignment
+        cell.alignment = Alignment(horizontal='left', vertical='top', wrap_text=True)
     for cell in ws['E']:
         cell.alignment = Alignment(horizontal='left', vertical='top', wrap_text=True)
 

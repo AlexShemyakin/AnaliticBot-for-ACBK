@@ -142,7 +142,8 @@ def excel_news(period, *args):
         else:
             ws[f'C{row}'] = 'б/д'
 
-        ws[f'D{row}'] = f'{j[2]}'
+        ws[f'D{row}'].hyperlink = f'{j[2]}'
+        ws[f'D{row}'].value = f'{j[2]}'
         ws[f'E{row}'] = f'{j[3]}'
         row += 1
 
@@ -216,7 +217,8 @@ def excel():
         date = datetime(int(temp[0]), int(temp[1]), int(temp[2]))
         date = date.strftime('%d %B %Y')
         ws[f'C{row}'] = f'{date}'
-        ws[f'D{row}'] = j[2]
+        ws[f'D{row}'].hyperlink = j[2]
+        ws[f'D{row}'].value = j[2]
         ws[f'E{row}'] = f'{j[3]}'
         row += 1
 
@@ -245,11 +247,3 @@ def excel():
     wb.save('ads.xlsx')
     wb.close()
     return
-
-
-if __name__ == '__main__':
-    excel()
-    # excel_news('p', '1/1/2021', '5/31/2021')
-    # excel_news('p', '1/1/2022', '1/31/2022')
-    # excel_news('m')
-    # date_from_excel()

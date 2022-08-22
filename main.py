@@ -345,7 +345,6 @@ def pars_market():
                 date_public = date_public.strftime('%Y.%m.%d')
 
                 temp_list = [i, date_public, href, desrciption]
-                print(temp_list)
                 list_result.append(temp_list)
     return list_result
 
@@ -417,7 +416,6 @@ def pars_salaxy():
 
                 temp_list = [i, date_public, href, desrciption]
                 list_result.append(temp_list)
-                print(temp_list)
 
     return list_result
 
@@ -500,8 +498,6 @@ def pars_slanet():
                 temp_list = [i, date_public, href, desrciption]
                 list_result.append(temp_list)
 
-                print(temp_list)
-                print('\n')
     return list_result
 
 
@@ -592,18 +588,4 @@ def pars_avi():
                 temp_list = [i, date_public, href, desrciption]
                 list_result.append(temp_list)
 
-                print(temp_list)
-                print('\n')
     return list_result
-
-
-if __name__ == '__main__':
-    # edc_sale()
-    # pars_olx()
-    # pars_slanet()
-    # pars_salaxy()
-    # pars_market()
-    # find_news('p', '1.1.2021', '31.5.2021')
-    pars_avi()
-    # find_news('m')
-    # open_href()

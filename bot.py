@@ -24,7 +24,7 @@ def start_bot():
         markup.add(btn1, btn2, btn3)
 
         bot.send_message(message.chat.id,
-                         "\N{Deer} Чтобы подробнее узнать про данный Бот нажмите на кнопку About".format(
+         "\N{Deer} Чтобы показать назначение бота, кнопок и адрес поддержки, нажмите на кнопку About".format(
                              message.from_user), reply_markup=markup)
 
         bot.send_message(message.chat.id,
@@ -47,12 +47,12 @@ def start_bot():
             bot.send_message(message.chat.id,
                              "\N{Deer} Бот выполняет поиск объявлений о продаже объектов животного мира и их дериватов, "
                              "а также проводит мониторинг интернет-пространства на наличие опубликованных материалов "
-                             "по теме контрабанды объектов животного мира и их дериватов")
+                             "по теме контрабанды объектов животного мира и их дериватов.")
             bot.send_message(message.chat.id,
-                             "\N{Deer} Для выполнения поиска объявлений нажмите кнопку Ads")
+                             "\N{Deer} Для выполнения поиска объявлений нажмите кнопку Ads.")
 
             bot.send_message(message.chat.id,
-                             "\N{Deer} Для выполнения поиска новостей нажмите кнопку News")
+                             "\N{Deer} Для выполнения поиска новостей нажмите кнопку News.")
 
             bot.send_message(message.from_user.id, "\N{Wrench} Если бот перестал работать или есть вопросы, "
                                                    "прошу писать на почту alexander.shemyakin94@gmail.com")
@@ -86,7 +86,7 @@ def start_bot():
             bot.send_message(message.from_user.id, 'Процесс может занять несколько минут.'.format(message.from_user),
                              reply_markup=markup)
             exnw('m')
-            bot.send_message(message.from_user.id, f'\N{Customs} Обновленная таблица с новостями за месяц'.
+            bot.send_message(message.from_user.id, f'\N{Customs} Обновленная таблица с новостями'.
                              format(message.from_user), reply_markup=markup)
 
             bot.send_document(message.from_user.id, open('news.xlsx', 'rb'))
@@ -114,7 +114,7 @@ def start_bot():
 
             flag = 1
             bot.send_message(message.from_user.id,
-                             "Введите конечную дату в формате 'ММ.ДД.ГГ'".format(message.from_user),
+                             "Введите конечную дату в формате 'ДД.ММ.ГГ'".format(message.from_user),
                              reply_markup=markup)
 
 
@@ -134,7 +134,7 @@ def start_bot():
             bot.send_message(message.from_user.id, 'Процесс может занять несколько минут'.format(message.from_user),
                              reply_markup=markup)
             exnw('p', start_date, end_date)
-            bot.send_message(message.from_user.id, f'\N{Customs} Обновленная таблица с новостями за период'.
+            bot.send_message(message.from_user.id, f'\N{Customs} Обновленная таблица с новостями'.
                              format(message.from_user), reply_markup=markup)
             bot.send_document(message.from_user.id, open('news.xlsx', 'rb'))
 

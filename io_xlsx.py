@@ -178,12 +178,14 @@ def excel():
     rslt_edc = pars_edc()
     rslt_market = pars_market()
     rslt_slanet = pars_slanet()
-    rslt_avi = pars_avi
+    rslt_avi = pars_avi()
     for i in rslt_edc:
         list_result.append(i)
     for i in rslt_market:
         list_result.append(i)
     for i in rslt_slanet:
+        list_result.append(i)
+    for i in rslt_avi:
         list_result.append(i)
 
     data_from_excel = advert_from_excel()

@@ -8,6 +8,8 @@ from webdriver_manager.firefox import GeckoDriverManager
 from bs4 import BeautifulSoup
 import re
 from operator import itemgetter
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 
 def find_month(month):
@@ -51,9 +53,11 @@ def find_news(period, *args):
     count_pages = 0
     firefox_options = Options()
     firefox_options.add_argument('user-data-dir=selenium')
-    # firefox_options.add_argument("--headless")
+    firefox_options.add_argument("--headless")
     driver = webdriver.Firefox(executable_path=GeckoDriverManager().install(), options=firefox_options)
+    driver.implicitly_wait(10)
     driver.get('https://google.com/')
+
 
     for req in list_key:
         if count_requests == 1:
@@ -66,18 +70,18 @@ def find_news(period, *args):
         search.clear()
         search.send_keys(req)
         search.submit()
-        time.sleep(1)
+        time.sleep(3)
 
         if period == 'm' and count_requests == 0:
             driver.find_element(by=By.CLASS_NAME, value='t2vtad').click()
             driver.find_elements(by=By.CLASS_NAME, value='KTBKoe')[1].click()
-            driver.find_elements(by=By.CLASS_NAME, value='tnhqA')[12].click()
+            driver.find_elements(by=By.CLASS_NAME, value='tnhqA')[11].click()
             count_requests = 1
 
         elif period == 'p' and count_requests == 0:
             driver.find_element(by=By.CLASS_NAME, value='t2vtad').click()
             driver.find_elements(by=By.CLASS_NAME, value='KTBKoe')[1].click()
-            driver.find_elements(by=By.CLASS_NAME, value='tnhqA')[14].click()
+            driver.find_elements(by=By.CLASS_NAME, value='tnhqA')[13].click()
             driver.find_element(by=By.ID, value='OouJcb').send_keys(args[0])
             driver.find_element(by=By.ID, value='rzG2be').send_keys(args[1])
             driver.find_elements(by=By.CLASS_NAME, value='fE5Rge')[0].click()
@@ -89,6 +93,7 @@ def find_news(period, *args):
                 search = driver.find_elements(by=By.CLASS_NAME, value='jGGQ5e')
             except:
                 break
+
             for j, i in enumerate(search):
                 list_attr = []
                 header = i.text.find('\n')
@@ -142,7 +147,7 @@ def find_news(period, *args):
 #открытие объявлений с olx.kz
 def open_href(href, request):
     url = f'{href}'
-    page = requests.get(url)  # извлекаем данные в переменную
+    page = requests.get(f'{url}', headers={'Connection': 'close'})  # извлекаем данные в переменную
     soup = BeautifulSoup(page.text, 'html.parser')  # сохраняем html страницы, откуда будем извлекать данные
     description = soup.find('div', {'class': 'css-g5mtbi-Text'}).get_text()
     date_public = soup.find('span', {'class': 'css-19yf5ek'}).get_text()
@@ -178,7 +183,7 @@ def pars_olx():
         url_olx = f'https://www.olx.kz/d/list/q-{i}/'
 
         # извлекаем данные в переменную
-        page = requests.get(url_olx)
+        page = requests.get(f'{url_olx}', headers={'Connection': 'close'})
 
         # сохраняем html страницы, откуда будем извлекать данные
         soup = BeautifulSoup(page.text, 'html.parser')
@@ -589,3 +594,6 @@ def pars_avi():
                 list_result.append(temp_list)
 
     return list_result
+
+if __name__ == '__main__':
+    find_news('m')

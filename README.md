@@ -10,7 +10,7 @@
 ## Технологии и библиотеки
 - Python3.9
 - telebot
-- openpyxl, pandas, io_xlsx
+- openpyxl, pandas
 - Selenium
 - Beautiful Soup
 - ✨Magic ✨

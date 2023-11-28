@@ -3,7 +3,6 @@ from openpyxl.utils.cell import get_column_letter
 from openpyxl.styles import Alignment
 import pandas as pd
 from main import pars_olx, find_news, pars_edc, pars_market, pars_slanet, pars_avi
-from operator import itemgetter
 from datetime import datetime
 import re
 

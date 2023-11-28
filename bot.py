@@ -1,14 +1,13 @@
 import telebot
 from telebot import types
 from io_xlsx import excel as ex, excel_news as exnw
-from settings import TOKEN as TOKEN
+from .env import TOKEN
 import time
 import re
 
 flag = 0
 def start_bot():
-    token = TOKEN
-    bot = telebot.TeleBot(token)
+    bot = telebot.TeleBot(TOKEN)
 
     # активация командой start
     @bot.message_handler(commands=['start'])

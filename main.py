@@ -7,9 +7,6 @@ from selenium.webdriver.common.by import By
 from webdriver_manager.firefox import GeckoDriverManager
 from bs4 import BeautifulSoup
 import re
-from operator import itemgetter
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 
 
 def find_month(month):
